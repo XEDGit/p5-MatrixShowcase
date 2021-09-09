@@ -5,8 +5,8 @@ var space			= 20;				//space between cubes
 var speed			= 10;				//rotation speed
 var backMult		= 0.01;				//back rotation speed relative to normal speed
 var bkg				= 255;				//background color
-var selectColor		= [0, 75, 90];		//color of the selected cube
-var selMode			= 0;				//mode of selection, 0 or 1
+var selectColor		= [0, 75, 0];		//color of the selected cube
+var selMode			= 0;				//mode of color selection, 0 or 1
 var rotationSide	= 0;				//rotate on X(0) or Y(1) axis
 var border			= 10;				//space between cubes and border of canvas
 
@@ -19,6 +19,7 @@ var rotation		= 1;
 var back			= 0;
 var matrices		= [];
 var colors			= [];
+var recording		= true;
 
 function setup() {
 	//help console log
@@ -28,7 +29,8 @@ function setup() {
 	//settings and start
 	angleMode(DEGREES);
 	colorMode(HSB);
-	init();
+	//debug
+	init()
 }
 
 function init() {
@@ -37,7 +39,8 @@ function init() {
 		throw new Error("set settings bigger than 0, then init()");
 	//canvas creation
 	var cnv = createCanvas(matrixSize, matrixSize, WEBGL);
-	cnv.mouseOut(function(){selected = [num + 1, num + 1]; prevRotation.splice(0, prevRotation.length); prevSelected.splice(1, prevSelected.length - 1)});
+	cnv.mouseOut(function(){selected = [num + 1, num + 1]; recording = false;});
+	cnv.mouseOver(function(){recording = true;});
 	definePoints();
 }
 
@@ -67,6 +70,17 @@ function drawBoxes() {
 		for (let j = 0; j < num; j++) {
 			//get if mouse is on a cube
 			if ((mouseX > matrices[i][j][0] - space / 2 && mouseX <= matrices[i][j][0] + singleBoxSize + space / 2) && (mouseY > matrices[i][j][1] - singleBoxSize  - space / 2 && mouseY <= matrices[i][j][1] + space / 2)) {
+				//change selected
+				if ((selected[0] != i || selected[1] != j) && recording)
+				{
+					if (selected[0] != num + 1)
+					{
+						prevSelected.push(selected);
+						prevRotation.push(rotation);
+					}
+					selected = [i, j];
+					rotation = 0;
+				}
 				for (let v = 0; v < prevSelected.length; v++) {
 					const el = prevSelected[v];
 					if (el[0] == i && el[1] == j)
@@ -76,6 +90,7 @@ function drawBoxes() {
 						prevSelected.splice(v, 1);
 					}
 				}
+				//draw with rotationSide and selMode conditions
 				if (rotation < 90)
 					rotation += speed;
 				if (rotationSide == 1)
@@ -98,78 +113,81 @@ function drawBoxes() {
 					box(singleBoxSize);
 					rotateX(-rotation);
 				}
-				//change selected
-				if (selected[0] != i || selected[1] != j)
-				{
-						if (selected[0] != num + 1)
-						{
-							prevSelected.push(selected);
-							prevRotation.push(rotation);
-						}
-						selected = [i, j];
-						rotation = 0;
-				}
 				translate(singleBoxSize + space, 0, 0);
 			}
 			else
 			{
-				if (prevSelected.length == 1)
+				if (selected[0] == i && selected[1] == j)
 				{
-					if (selMode == 0)
-						fill(selectColor[0], selectColor[1], selectColor[2]);
+					if (rotation < 90)
+						rotation += speed;
+					if (rotationSide == 1)
+					{
+						rotateY(rotation);
+						if (selMode == 1)
+								fill(lerpColor(color(colors[i][j]), color(selectColor), rotation / 90));
+							else
+								fill(lerpColor(color(selectColor), color(colors[i][j]), rotation / 90));
+						box(singleBoxSize);
+						rotateY(-rotation);
+					}
 					else
-						fill(colors[i][j][0], colors[i][j][1], colors[i][j][2]);
+					{
+						rotateX(rotation);
+						if (selMode == 1)
+								fill(lerpColor(color(colors[i][j]), color(selectColor), rotation / 90));
+							else
+								fill(lerpColor(color(selectColor), color(colors[i][j]), rotation / 90));
+						box(singleBoxSize);
+						rotateX(-rotation);
+					}
+					translate(singleBoxSize + space, 0, 0);
+					continue;
+				}
+				let sel = -1;
+				for (let v = 1; v < prevSelected.length; v++) {
+					const el = prevSelected[v];
+					if (el[0] == i && el[1] == j)
+						sel = v;
+				}
+				if (sel == -1)
+				{
+					if (selMode == 1)
+						fill(colors[i][j][0], colors[i][j][1], colors[i][j][2])
+					else
+						fill(selectColor[0], selectColor[1], selectColor[2])
 					box(singleBoxSize);
 					translate(singleBoxSize + space, 0, 0);
 					continue;
 				}
+				if (rotationSide == 1)
+				{
+					rotateY(prevRotation[sel - 1]);
+					if (selMode == 1)
+						fill(lerpColor(color(colors[i][j]), color(selectColor), prevRotation[sel - 1] / 90));
+					else
+						fill(lerpColor(color(selectColor), color(colors[i][j]), prevRotation[sel - 1] / 90));
+					box(singleBoxSize);
+					rotateY(-prevRotation[sel - 1]);
+				}
 				else
 				{
-					let sel = -1;
-					for (let v = 0; v < prevSelected.length; v++) {
-						const el = prevSelected[v];
-						if (el[0] == i && el[1] == j)
-							sel = v;
-					}
-					if (sel == -1)
-					{
-						if (selMode == 1)
-							fill(colors[i][j][0], colors[i][j][1], colors[i][j][2])
-						else
-							fill(selectColor[0], selectColor[1], selectColor[2])
-						box(singleBoxSize);
-						translate(singleBoxSize + space, 0, 0);
-						continue;
-					}
-					if (rotationSide == 1)
-					{
-						rotateY(prevRotation[sel - 1]);
-						if (selMode == 1)
-							fill(lerpColor(color(colors[i][j]), color(selectColor), prevRotation[sel - 1] / 90));
-						else
-							fill(lerpColor(color(selectColor), color(colors[i][j]), prevRotation[sel - 1] / 90));
-						box(singleBoxSize);
-						rotateY(-prevRotation[sel - 1]);
-					}
+					rotateX(prevRotation[sel - 1]);
+					if (selMode == 1)
+						fill(lerpColor(color(colors[i][j]), color(selectColor), prevRotation[sel - 1] / 90));
 					else
-					{
-						rotateX(prevRotation[sel - 1]);
-						if (selMode == 1)
-							fill(lerpColor(color(colors[i][j]), color(selectColor), prevRotation[sel - 1] / 90));
-						else
-							fill(lerpColor(color(selectColor), color(colors[i][j]), prevRotation[sel - 1] / 90));
-						box(singleBoxSize);
-						rotateX(-prevRotation[sel - 1]);
-					}
-					if (prevRotation[sel - 1] > 0)
-						prevRotation[sel - 1] -= speed * backMult;
-					else
-					{
-						prevRotation.splice(sel - 1, 1);
-						prevSelected.splice(sel, 1);
-					}
-					translate(singleBoxSize + space, 0, 0);
+						fill(lerpColor(color(selectColor), color(colors[i][j]), prevRotation[sel - 1] / 90));
+					box(singleBoxSize);
+					rotateX(-prevRotation[sel - 1]);
 				}
+				if (prevRotation[sel - 1] > 0)
+					prevRotation[sel - 1] -= speed * backMult;
+				else
+				{
+					prevRotation.splice(sel - 1, 1);
+					prevSelected.splice(sel, 1);
+				}
+				translate(singleBoxSize + space, 0, 0);
 			}
 		}
 		translate((-singleBoxSize * num) + (-space * num), -(singleBoxSize + space), 0);
