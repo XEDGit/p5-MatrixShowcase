@@ -46,7 +46,7 @@ function init() {
 
 function definePoints() {
 	//set single box size
-	singleBoxSize = ((matrixSize / num) - ((space / num) * (num - 1)));
+	singleBoxSize = ((matrixSize / num) - ((space / num) * (num - 1)) - ((border * 2) / num));
 	//mouse check values
 	for (let i = 0; i < num; i++) {
 		let tempArray = [];
@@ -65,7 +65,7 @@ function definePoints() {
 }
 
 function drawBoxes() {
-	translate((-width / 2) + (singleBoxSize / 2), (height / 2) - (singleBoxSize / 2), -singleBoxSize / 2);
+	translate((-width / 2) + (singleBoxSize / 2) + border, (height / 2) - (singleBoxSize / 2) - border, -singleBoxSize / 2);
 	for (let i = 0; i < num; i++) {
 		for (let j = 0; j < num; j++) {
 			//get if mouse is on a cube
