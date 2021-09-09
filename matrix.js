@@ -1,5 +1,5 @@
 //settings
-var num				= 5;				//cubes per side
+var num				= 2;				//cubes per side
 var matrixSize		= 500;				//size of the canvas
 var space			= 20;				//space between cubes
 var speed			= 10;				//rotation speed
@@ -39,7 +39,7 @@ function init() {
 		throw new Error("set settings bigger than 0, then init()");
 	//canvas creation
 	var cnv = createCanvas(matrixSize, matrixSize, WEBGL);
-	cnv.mouseOut(function(){selected = [num + 1, num + 1]; recording = false;});
+	cnv.mouseOut(function(){recording = false;});
 	cnv.mouseOver(function(){recording = true;});
 	definePoints();
 }
@@ -48,19 +48,47 @@ function definePoints() {
 	//set single box size
 	singleBoxSize = ((matrixSize / num) - ((space / num) * (num - 1)) - ((border * 2) / num));
 	//mouse check values
+	let y = height - border;
 	for (let i = 0; i < num; i++) {
 		let tempArray = [];
 		let tempColors = [];
+		let x = border;
 		for (let j = 0; j < num; j++) {
-			let x =	(singleBoxSize  + space ) * j;
-			let y =	(singleBoxSize  + space) * (num - i);
 			let h , s, b;
 			h = s = b = random(255);
 			tempArray.push([x, y, 0]);
 			tempColors.push([h, s, b]);
+			x += singleBoxSize;
+			if (j != 0)
+				x += space;
 		}
+		y -= singleBoxSize + space;
 		matrices.push(tempArray);
 		colors.push(tempColors);
+	}
+}
+
+function changeSelect(i, j, rec)
+{
+	//change selected
+	if ((selected[0] != i || selected[1] != j) && rec)
+	{
+		if (selected[0] != num + 1)
+		{
+			prevSelected.push(selected);
+			prevRotation.push(rotation);
+		}
+		selected = [i, j];
+		rotation = 0;
+	}
+	for (let v = 1; v < prevSelected.length; v++) {
+		const el = prevSelected[v];
+		if (el[0] == i && el[1] == j)
+		{
+			rotation = prevRotation[v - 1];
+			prevRotation.splice(v - 1, 1);
+			prevSelected.splice(v, 1);
+		}
 	}
 }
 
@@ -69,27 +97,8 @@ function drawBoxes() {
 	for (let i = 0; i < num; i++) {
 		for (let j = 0; j < num; j++) {
 			//get if mouse is on a cube
-			if ((mouseX > matrices[i][j][0] - space / 2 && mouseX <= matrices[i][j][0] + singleBoxSize + space / 2) && (mouseY > matrices[i][j][1] - singleBoxSize  - space / 2 && mouseY <= matrices[i][j][1] + space / 2)) {
-				//change selected
-				if ((selected[0] != i || selected[1] != j) && recording)
-				{
-					if (selected[0] != num + 1)
-					{
-						prevSelected.push(selected);
-						prevRotation.push(rotation);
-					}
-					selected = [i, j];
-					rotation = 0;
-				}
-				for (let v = 0; v < prevSelected.length; v++) {
-					const el = prevSelected[v];
-					if (el[0] == i && el[1] == j)
-					{
-						rotation = prevRotation[v - 1];
-						prevRotation.splice(v - 1, 1);
-						prevSelected.splice(v, 1);
-					}
-				}
+			if ((mouseX > matrices[i][j][0] && mouseX <= matrices[i][j][0] + singleBoxSize) && (mouseY > matrices[i][j][1] - singleBoxSize && mouseY <= matrices[i][j][1])) {
+				changeSelect(i, j, recording);
 				//draw with rotationSide and selMode conditions
 				if (rotation < 90)
 					rotation += speed;
@@ -142,6 +151,7 @@ function drawBoxes() {
 						rotateX(-rotation);
 					}
 					translate(singleBoxSize + space, 0, 0);
+					changeSelect(6, 6, true);
 					continue;
 				}
 				let sel = -1;
