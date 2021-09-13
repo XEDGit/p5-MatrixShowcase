@@ -7,7 +7,7 @@ You'll find a basic example on how to import the file in index.html
 
 The rendering order is from bottom left to top right in rows
 
-Available Settings: (you can edit any directly at top of the source code of the imported file)
+#### Available Settings: (you can edit any directly at top of the source code of the imported file)
 
 **-num**				//number of cubes per side
 **-rotation**			//rotation in Degrees
@@ -21,7 +21,7 @@ Available Settings: (you can edit any directly at top of the source code of the 
 **-border**				//space between cubes and border of canvas
 **-maxCubes**			//max number of cubes per line, -1 for all
 
-###### -selMode:
+##### -selMode:
 	**this is a particular setting regarding the way the random colors and your selectColor get distributed in the canvas;**
 	mode 0
 		-rotation 0:		selectColor
@@ -32,7 +32,7 @@ Available Settings: (you can edit any directly at top of the source code of the 
 	mode 2
 		-add image support, don't forget to fill in all the dependant variables to make this work
 
-**-selMode dependant variables**
+###### -selMode dependant variables
 	-resDirectory
 		the path of the folder where source images are stored, no / at the end
 	-resExt
@@ -44,5 +44,5 @@ Available Settings: (you can edit any directly at top of the source code of the 
 
 **these variables doesn't need to be set if selMode is not set to 2**
 
-Libraries:
+#### Libraries:
 					<p5.js>		-	https://p5js.org/
