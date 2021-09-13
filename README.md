@@ -9,30 +9,31 @@ The rendering order is from bottom left to top right in rows
 
 #### Available Settings: (you can edit any directly at top of the source code of the imported file)
 
-**-num**				//number of cubes per side
-**-rotation**			//rotation in Degrees
-**-matrixSize**			//size of the canvas, in both x and y axes
-**-space**				//space between cubes
-**-speed**				//rotation speed
-**-backMult**			//back rotation speed relative to normal speed (speed * backMult);
-**-bkg**				//background color
-**-selectColor**		//color of the selected cube
-**-rotationSide**		//rotate on X(0) or Y(1) axis
-**-border**				//space between cubes and border of canvas
-**-maxCubes**			//max number of cubes per line, -1 for all
+	-num				//number of cubes per side
+	-rotation			//rotation in Degrees
+	-matrixSize			//size of the canvas, in both x and y axes
+	-space				//space between cubes
+	-speed				//rotation speed
+	-backMult			//back rotation speed relative to normal speed (speed * backMult)
+	-bkg				//background color
+	-selectColor			//main color
+	-rotationSide			//rotate on X(0) or Y(1) axis
+	-border				//space between cubes and border of canvas
+	-maxCubes			//maximum number of cubes per line, set this to -1 to ignore it
 
-##### -selMode:
-	**this is a particular setting regarding the way the random colors and your selectColor get distributed in the canvas;**
-	mode 0
-		-rotation 0:		selectColor
-		-rotation max:		random color
-	mode 1
-		-rotation 0:		random color
-		-rotation max:		selectColor
-	mode 2
-		-add image support, don't forget to fill in all the dependant variables to make this work
+	 -selMode
+		this is a particular setting regarding the way the random colors and your selectColor get distributed in the canvas, 
+		it can be set to 0, 1 or 2
+		mode 0
+			-rotation 0:		selectColor
+			-rotation max:		random color
+		mode 1
+			-rotation 0:		random color
+			-rotation max:		selectColor
+		mode 2
+			-add image support, don't forget to fill in all the dependant variables to make this work
 
-###### -selMode dependant variables
+##### -selMode dependant variables
 	-resDirectory
 		the path of the folder where source images are stored, no / at the end
 	-resExt
@@ -42,7 +43,7 @@ The rendering order is from bottom left to top right in rows
 	-deleteNormal
 		deletes cubes without image assigned
 
-**these variables doesn't need to be set if selMode is not set to 2**
+***these variables doesn't need to be set if selMode is not set to 2**
 
 #### Libraries:
-					<p5.js>		-	https://p5js.org/
+	<p5.js>		-	https://p5js.org/
