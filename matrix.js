@@ -142,19 +142,19 @@ function changeSelect(i, j, rec) {
 			prevSelected.push(selected);
 			selected = endCube;
 		}
-	
-	let found = false;
-	for (let v = 0; v < prevSelected.length; v++) {
-		const el = prevSelected[v];
-		if (el.i == i && el.j == j) {
-			found = true;
-			selected.rotation = prevSelected[v].rotation;
-			prevSelected.splice(v, 1);
-			break;
+
+		let found = false;
+		for (let v = 0; v < prevSelected.length; v++) {
+			const el = prevSelected[v];
+			if (el.i == i && el.j == j) {
+				found = true;
+				selected.rotation = prevSelected[v].rotation;
+				prevSelected.splice(v, 1);
+				break;
+			}
 		}
+		if (!found) selected.rotation = 0;
 	}
-	if (!found) selected.rotation = 0;
-}
 }
 
 function drawBoxes() {
@@ -177,7 +177,7 @@ function drawBoxes() {
 				mouseY > cubes[i][j].y - singleBoxSize &&
 				mouseY <= cubes[i][j].y
 			) {
-				if (selected.i != i || selected.j != j) {changeSelect(i, j, recording);}
+				if (selected.i != i || selected.j != j) { changeSelect(i, j, recording); }
 				//draw with rotationSide and selMode conditions
 				if (selected.rotation < rotation) selected.rotation += speed;
 				else selected.rotation = rotation;
