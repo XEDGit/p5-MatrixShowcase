@@ -1,6 +1,12 @@
-# p5-MatrixShowcase v0.5
+# p5-MatrixShowcase v0.6
 
-## Release 1
+#### Changelog v0.6
+Rendering order have been changed to from top left to bottom right
+
+Now there's possibility to add **links**!
+check Available Settings for more info
+
+## Release 1 v0.5
 
 A small script to create a interactive showcase matrix for your website within a single JS function!
 You'll find a basic example on how to import the file in index.html
@@ -44,7 +50,13 @@ The rendering order is from bottom left to top right in rows
 		number of images stored in resDirectory folder
 	-deleteNormal
 		deletes cubes without image assigned
-
+	-links
+		an array containing links, its lenght must match the imgNumber.
+		Ex. (
+			"yourwebsite.com/location.html",
+			"yourwebsite.com/location2.html",
+			...
+		)
 ***these variables doesn't need to be set if selMode is not set to 2**
 
 #### Libraries:

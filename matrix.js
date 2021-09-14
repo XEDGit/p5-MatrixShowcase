@@ -2,19 +2,26 @@
 var num = 3;						//cubes per side
 var rotation = 360;					//rotation in Degrees
 var matrixSize = 500;				//size of the canvas
-var space = 2;						//space between cubes
+var space = 20;						//space between cubes
 var speed = 5;						//rotation speed
 var backMult = 0.2;					//back rotation speed relative to normal speed
 var bkg = 255;						//background color
 var selectColor = [0, 10, 0];		//color of the selected cube
 var rotationSide = 0;				//rotate on X(0) or Y(1) axis
 var border = 30;					//space between cubes and border of canvas
-var maxCubes = 2;					//max number of cubes per line, -1 for all
-var selMode = 0;					//mode of color selection, 0 or 1 for colors, 2 for textures
+var maxCubes = -1;					//max number of cubes per line, -1 for all
+var selMode = 2;					//mode of color selection, 0 or 1 for colors, 2 for textures
 var resDirectory = "resources";		//used with selMode = 2, the path of the folder where source images are stored, no / at the end
 var resExt = ".png";				//used with selMode = 2, extension of images in resDirectory folder
 var imgNumber = 5;					//used with selMode = 2, number of images in resDirectory folder
 var deleteNormal = false;			//used with selMode = 2, deletes cubes without image
+var links = [
+	"xedgit.com/project/gcodesimulator.html",
+	"xedgit.com/project/matrixShowcase.html",
+	"xedgit.com/project/python.html",
+	"xedgit.com/project/unity.html",
+	"xedgit.com/project/adventofcode.html"
+]
 
 //task variables
 class Cube {
@@ -24,6 +31,21 @@ class Cube {
 		var direction = true;
 		var color;
 		var image;
+		var a;
+	}
+
+	onClick() {
+		if (
+			mouseX > this.x &&
+			mouseX <= this.x + singleBoxSize &&
+			mouseY < this.y + singleBoxSize &&
+			mouseY >= this.y
+			) 
+			{
+				var ind = index(this.i, this.j);
+				if (ind < imgArray.length)
+					window.location.href = links[ind];
+			}
 	}
 }
 var selected;
@@ -93,7 +115,7 @@ function definePoints() {
 	singleBoxSize =
 		matrixSize / num - (space / num) * (num - 1) - (border * 2) / num;
 	//mouse check values
-	let y = height - border;
+	let y = border;
 	//endcube
 	endCube = new Cube();
 	endCube.i = num + 1;
@@ -115,7 +137,8 @@ function definePoints() {
 			tempCube.j = j;
 			tempCube.x = x;
 			tempCube.y = y;
-			tempCube.image = imgArray[index(i, j)];
+			if (index(i, j) < imgArray.length)
+				tempCube.image = imgArray[index(i, j)];
 			let h = random(360);
 			let s = random(90, 100);
 			let b = random(90, 100);
@@ -125,7 +148,7 @@ function definePoints() {
 			x += space;
 		}
 		cubes.push(tempCubes);
-		y -= singleBoxSize + space;
+		y += singleBoxSize + space;
 	}
 	print(cubes);
 }
@@ -161,7 +184,7 @@ function drawBoxes() {
 	//go to bottom left to start rendering
 	translate(
 		-width / 2 + singleBoxSize / 2 + border,
-		height / 2 - singleBoxSize / 2 - border,
+		-height / 2 + singleBoxSize / 2 + border,
 		-singleBoxSize / 2
 	);
 	for (let i = 0; i < num; i++) {
@@ -174,8 +197,8 @@ function drawBoxes() {
 			if (
 				mouseX > cubes[i][j].x &&
 				mouseX <= cubes[i][j].x + singleBoxSize &&
-				mouseY > cubes[i][j].y - singleBoxSize &&
-				mouseY <= cubes[i][j].y
+				mouseY < cubes[i][j].y + singleBoxSize &&
+				mouseY >= cubes[i][j].y
 			) {
 				if (selected.i != i || selected.j != j) { changeSelect(i, j, recording); }
 				//draw with rotationSide and selMode conditions
@@ -305,15 +328,23 @@ function drawBoxes() {
 		if (maxCubes != -1)
 			translate(
 				-singleBoxSize * maxCubes + -space * maxCubes,
-				-(singleBoxSize + space),
+				singleBoxSize + space,
 				0
 			);
 		else
 			translate(
 				-singleBoxSize * num + -space * num,
-				-(singleBoxSize + space),
+				(singleBoxSize + space),
 				0
 			);
+	}
+}
+
+function mouseClicked() {
+	for (let i = 0; i < num; i++) {
+		for (let j = 0; j < num; j++) {
+			cubes[i][j].onClick();
+		}
 	}
 }
 
