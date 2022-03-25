@@ -11,7 +11,7 @@ check Available Settings for more info
 A small script to create a interactive showcase matrix for your website within a single JS function!
 You'll find a basic example on how to import the file in index.html
 
-A working example here: https://xedgit.dev
+A working example here: https://xedgit.dev/projects
 
 The rendering order is from bottom left to top right in rows
 
